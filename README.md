@@ -27,6 +27,7 @@ Two ways to pick a vendor:
 | --- | --- | --- | --- |
 | Deepgram (managed) | `deepgram` 🟢 | _none_ | `nova-3`, `en` |
 | Ares (managed) | `ares` 🟢 | _none_ | SDK default |
+| Fengming (managed) | `fengming` 🟢 | _none_ | SDK default |
 | AssemblyAI | `assemblyai` | `ASSEMBLYAI_API_KEY` | `en` |
 | Speechmatics | `speechmatics` | `SPEECHMATICS_API_KEY` | `en` |
 | OpenAI | `openai` | `OPENAI_STT_API_KEY` | `gpt-4o-transcribe`, `en` |
@@ -38,16 +39,31 @@ Two ways to pick a vendor:
 🟢 = keyless default. The selected vendor's credentials are validated **when the
 agent starts** (not at construction), so `/get_config` always works key-less.
 
+Ares and Fengming accept optional hotwords through `STT_KEYWORDS`, formatted as
+a JSON array such as `["Agora", "Conversational AI", "RTC"]`. Hotwords can improve
+recognition of domain terms, but may reduce recognition accuracy for other words.
+The recipe does not impose a keyword count limit.
+
 ### Sample code — how each vendor is wired
 
 Every vendor is a small, copy-pasteable builder in [`server/src/vendors.py`](server/src/vendors.py)
 that shows the real SDK constructor. For example:
 
 ```python
-from agora_agent.agentkit.vendors import DeepgramSTT, AssemblyAISTT, MicrosoftSTT
+from agora_agent.agentkit.vendors import (
+    AresSTT,
+    AssemblyAISTT,
+    DeepgramSTT,
+    FengmingSTT,
+    MicrosoftSTT,
+)
 
 # Deepgram — Agora-managed, key-less:
 DeepgramSTT(model="nova-3", language="en")
+
+# Ares and Fengming - optional managed hotwords:
+AresSTT(keywords=["Agora", "Conversational AI", "RTC"])
+FengmingSTT(keywords=["Agora", "Conversational AI", "RTC"])
 
 # AssemblyAI — set ASSEMBLYAI_API_KEY:
 AssemblyAISTT(
@@ -126,6 +142,7 @@ credentials are needed — Deepgram STT is Agora-managed.
 | `STT_VENDOR` | | `deepgram` | Which STT vendor to use (see [Vendors](#vendors)) |
 | `STT_MODEL` | | per-vendor | Optional model override (vendors with a model field) |
 | `STT_LANGUAGE` | | per-vendor | Optional language hint (documented per vendor) |
+| `STT_KEYWORDS` | | — | Optional JSON array of hotwords for Ares and Fengming |
 | `AGENT_GREETING` | | built-in | Optional opening line override |
 | _vendor creds_ | | — | Required only for the selected BYO vendor (see [Vendors](#vendors)) |
 
@@ -213,6 +230,7 @@ name → builder + required env. See [ARCHITECTURE.md](./ARCHITECTURE.md).
 | Problem | Fix |
 | --- | --- |
 | `STT vendor '<x>' requires environment variable(s): ...` at start | Set the listed env vars for that `STT_VENDOR` (see [Vendors](#vendors)), or switch back to `deepgram`. |
+| `STT_KEYWORDS must be a JSON array of non-empty strings` | Use JSON array syntax, for example `["Agora", "Conversational AI", "RTC"]`. |
 | No events appear in the timeline | Ensure `enable_rtm`, `enable_metrics`, `enable_error_message` are set (they are, by default in this recipe). |
 | Local calls fail under a global proxy (Clash, etc.) | Configure your proxy to send `127.0.0.1`, `localhost`, and RFC-1918 ranges DIRECT. |
 

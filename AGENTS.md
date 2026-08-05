@@ -9,7 +9,8 @@ is a per-vendor switchboard (one readable `build_<vendor>` per vendor) selected 
 - **`server/`** — Python FastAPI agent backend (:8000). Owns Agora token
   generation and agent session lifecycle. The STT leg is built from the
   per-vendor builder registry in `server/src/vendors.py`; default vendor `deepgram` is
-  Agora-managed (keyless). SDK: `agora-agents>=2.3.0` (`import agora_agent`).
+  Agora-managed (keyless). SDK: `agora-agents` from GitHub `main`
+  (`import agora_agent`).
 - **`web/`** — Next.js 16 / React 19 / TypeScript frontend (:3000): the
   `EventTimeline` and the annotated transcript.
 - Auth: Token007 from `AGORA_APP_ID` + `AGORA_APP_CERTIFICATE`.
@@ -68,6 +69,7 @@ The web client uses `AgoraVoiceAI` to subscribe and surfaces events as
 | `STT_VENDOR` | `deepgram` | which STT vendor to build (see README Vendors table) |
 | `STT_MODEL` | per-vendor | optional model override (vendors with a model field) |
 | `STT_LANGUAGE` | per-vendor | optional language hint (documented per vendor) |
+| `STT_KEYWORDS` | — | optional JSON hotword array for Ares and Fengming |
 | _vendor creds_ | — | required only for the selected BYO vendor (`required_env(STT_VENDOR)`) |
 
 ## Patterns
