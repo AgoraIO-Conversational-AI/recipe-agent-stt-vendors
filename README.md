@@ -27,7 +27,6 @@ Two ways to pick a vendor:
 | --- | --- | --- | --- |
 | Deepgram (managed) | `deepgram` 🟢 | _none_ | `nova-3`, `en` |
 | Ares (managed) | `ares` 🟢 | _none_ | SDK default |
-| Fengming (managed) | `fengming` 🟢 | _none_ | SDK default |
 | AssemblyAI | `assemblyai` | `ASSEMBLYAI_API_KEY` | `en` |
 | Speechmatics | `speechmatics` | `SPEECHMATICS_API_KEY` | `en` |
 | OpenAI | `openai` | `OPENAI_STT_API_KEY` | `gpt-4o-transcribe`, `en` |
@@ -39,7 +38,7 @@ Two ways to pick a vendor:
 🟢 = keyless default. The selected vendor's credentials are validated **when the
 agent starts** (not at construction), so `/get_config` always works key-less.
 
-Ares and Fengming accept optional hotwords through `STT_KEYWORDS`, formatted as
+Ares accepts optional hotwords through `STT_KEYWORDS`, formatted as
 a JSON array such as `["Agora", "Conversational AI", "RTC"]`. Hotwords can improve
 recognition of domain terms, but may reduce recognition accuracy for other words.
 The recipe does not impose a keyword count limit.
@@ -54,16 +53,14 @@ from agora_agent.agentkit.vendors import (
     AresSTT,
     AssemblyAISTT,
     DeepgramSTT,
-    FengmingSTT,
     MicrosoftSTT,
 )
 
 # Deepgram — Agora-managed, key-less:
 DeepgramSTT(model="nova-3", language="en")
 
-# Ares and Fengming - optional managed hotwords:
+# Ares - optional managed hotwords:
 AresSTT(keywords=["Agora", "Conversational AI", "RTC"])
-FengmingSTT(keywords=["Agora", "Conversational AI", "RTC"])
 
 # AssemblyAI — set ASSEMBLYAI_API_KEY:
 AssemblyAISTT(
@@ -142,7 +139,7 @@ credentials are needed — Deepgram STT is Agora-managed.
 | `STT_VENDOR` | | `deepgram` | Which STT vendor to use (see [Vendors](#vendors)) |
 | `STT_MODEL` | | per-vendor | Optional model override (vendors with a model field) |
 | `STT_LANGUAGE` | | per-vendor | Optional language hint (documented per vendor) |
-| `STT_KEYWORDS` | | — | Optional JSON array of hotwords for Ares and Fengming |
+| `STT_KEYWORDS` | | — | Optional JSON array of hotwords for Ares |
 | `AGENT_GREETING` | | built-in | Optional opening line override |
 | _vendor creds_ | | — | Required only for the selected BYO vendor (see [Vendors](#vendors)) |
 

@@ -44,7 +44,7 @@ def test_start_constructs_real_agent_and_returns_shape(fake_env, monkeypatch):
     assert captured["greeting"] == "Hi! Talk to me and watch the event timeline light up."
 
 
-def test_start_passes_fengming_keywords_to_agent(fake_env, monkeypatch):
+def test_start_passes_ares_keywords_to_agent(fake_env, monkeypatch):
     agent = _fresh_agent_module()
     captured = {}
     monkeypatch.setenv(
@@ -70,12 +70,12 @@ def test_start_passes_fengming_keywords_to_agent(fake_env, monkeypatch):
             channel_name="ch",
             agent_uid=111,
             user_uid=222,
-            vendor="fengming",
+            vendor="ares",
         )
     )
 
     assert captured["stt"] == {
-        "vendor": "fengming",
+        "vendor": "ares",
         "params": {"keywords": ["Agora", "Conversational AI", "RTC"]},
     }
     assert captured["greeting"] == (

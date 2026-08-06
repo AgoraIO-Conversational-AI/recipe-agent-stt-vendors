@@ -12,7 +12,6 @@ import vendors as R  # noqa: E402
 EXPECTED_VENDOR = {
     "deepgram": "deepgram",
     "ares": "ares",
-    "fengming": "fengming",
     "assemblyai": "assemblyai",
     "speechmatics": "speechmatics",
     "microsoft": "microsoft",
@@ -47,23 +46,23 @@ def test_byo_vendor_missing_creds_raises():
         raise AssertionError(f"{name} should raise when creds are absent")
 
 
-@pytest.mark.parametrize("name", ["ares", "fengming"])
-def test_managed_hotword_vendors_emit_keywords(name):
+def test_ares_emits_keywords():
     vendor = R.build_vendor(
-        name,
+        "ares",
         {"STT_KEYWORDS": '["Agora", "Conversational AI", "RTC"]'},
     )
 
     assert vendor.to_config() == {
-        "vendor": name,
+        "vendor": "ares",
         "params": {"keywords": ["Agora", "Conversational AI", "RTC"]},
     }
 
 
-@pytest.mark.parametrize("name", ["ares", "fengming"])
-def test_managed_hotword_vendors_omit_empty_keywords(name):
-    assert R.build_vendor(name, {}).to_config() == {"vendor": name}
-    assert R.build_vendor(name, {"STT_KEYWORDS": "[]"}).to_config() == {"vendor": name}
+def test_ares_omits_empty_keywords():
+    assert R.build_vendor("ares", {}).to_config() == {"vendor": "ares"}
+    assert R.build_vendor("ares", {"STT_KEYWORDS": "[]"}).to_config() == {
+        "vendor": "ares"
+    }
 
 
 @pytest.mark.parametrize(

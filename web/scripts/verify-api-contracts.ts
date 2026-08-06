@@ -132,14 +132,14 @@ async function verifyApiClientRequests() {
       assert(body.channelName === 'test-channel', 'POST /api/startAgent should include channelName')
       assert(body.rtcUid === 9999, 'POST /api/startAgent should include rtcUid')
       assert(body.userUid === 1234, 'POST /api/startAgent should include userUid')
-      assert(body.vendor === 'fengming', 'POST /api/startAgent should include the selected vendor')
+      assert(body.vendor === 'ares', 'POST /api/startAgent should include the selected vendor')
 
       return Response.json({
         code: 0,
         data: {
           agent_id: 'mock-agent-id',
           channel_name: 'test-channel',
-          vendor: 'fengming',
+          vendor: 'ares',
           status: 'started',
         },
         msg: 'success',
@@ -160,9 +160,9 @@ async function verifyApiClientRequests() {
     const config = await getConfig({ uid: 1234, channel: 'test-channel' })
     assert(config.token === 'stub-token', 'GET /api/get_config should return response data')
 
-    const agent = await startAgent('test-channel', 9999, 1234, 'fengming')
+    const agent = await startAgent('test-channel', 9999, 1234, 'ares')
     assert(agent.agentId === 'mock-agent-id', 'POST /api/startAgent should return the agent id')
-    assert(agent.vendor === 'fengming', 'POST /api/startAgent should return the active vendor')
+    assert(agent.vendor === 'ares', 'POST /api/startAgent should return the active vendor')
 
     await stopAgent(agent.agentId)
 

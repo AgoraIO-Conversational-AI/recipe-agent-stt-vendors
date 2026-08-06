@@ -13,8 +13,8 @@ import os
 from typing import Callable, Dict, List, Optional, Tuple
 
 from agora_agent.agentkit.vendors import (
-    DeepgramSTT, AresSTT, FengmingSTT, AssemblyAISTT, SpeechmaticsSTT,
-    OpenAISTT, MicrosoftSTT, GoogleSTT, AmazonSTT, SarvamSTT,
+    DeepgramSTT, AresSTT, AssemblyAISTT, SpeechmaticsSTT, OpenAISTT,
+    MicrosoftSTT, GoogleSTT, AmazonSTT, SarvamSTT,
 )
 
 CATEGORY = "STT"
@@ -26,7 +26,7 @@ def _model(env, default: str) -> str:
 
 
 def _keywords(env) -> Optional[List[str]]:
-    """Parse the optional Ares/Fengming hotword list from STT_KEYWORDS."""
+    """Parse the optional Ares hotword list from STT_KEYWORDS."""
     raw = env.get("STT_KEYWORDS")
     if raw is None or not raw.strip():
         return None
@@ -57,11 +57,6 @@ def build_deepgram(env):
 def build_ares(env):
     """Ares — Agora-managed, with optional STT_KEYWORDS hotwords."""
     return AresSTT(keywords=_keywords(env))
-
-
-def build_fengming(env):
-    """Fengming — Agora-managed, with optional STT_KEYWORDS hotwords."""
-    return FengmingSTT(keywords=_keywords(env))
 
 
 def build_assemblyai(env):
@@ -132,7 +127,6 @@ def build_sarvam(env):
 REGISTRY: Dict[str, Tuple[Callable, List[str]]] = {
     "deepgram":     (build_deepgram,     []),
     "ares":         (build_ares,         []),
-    "fengming":     (build_fengming,     []),
     "assemblyai":   (build_assemblyai,   ["ASSEMBLYAI_API_KEY"]),
     "speechmatics": (build_speechmatics, ["SPEECHMATICS_API_KEY"]),
     "openai":       (build_openai,       ["OPENAI_STT_API_KEY"]),
