@@ -38,11 +38,11 @@ Two ways to pick a vendor:
 🟢 = keyless default. The selected vendor's credentials are validated **when the
 agent starts** (not at construction), so `/get_config` always works key-less.
 
-### Ares hotwords
+### Ares keywords
 
-Hotwords help improve ASR accuracy for specified terms, such as product names or
+Keywords help improve ASR accuracy for specified terms, such as product names or
 technical vocabulary. To configure them, open the pre-call screen, select
-`Ares`, enable **Enable hotwords**, enter comma-separated terms such as
+`Ares`, enable **Enable keywords**, enter comma-separated terms such as
 `Agora, Conversational AI, RTC`, and then start the conversation. The setting is
 optional, applies only to Ares, and is used for the current conversation. It may
 reduce recognition accuracy for other words.
@@ -63,7 +63,7 @@ from agora_agent.agentkit.vendors import (
 # Deepgram — Agora-managed, key-less:
 DeepgramSTT(model="nova-3", language="en")
 
-# Ares - optional managed hotwords:
+# Ares - optional managed keywords:
 AresSTT(keywords=["Agora", "Conversational AI", "RTC"])
 
 # AssemblyAI — set ASSEMBLYAI_API_KEY:

@@ -76,7 +76,7 @@ def test_start_passes_ares_keywords_to_agent(fake_env, monkeypatch):
         "params": {"keywords": ["Agora", "Conversational AI", "RTC"]},
     }
     assert captured["greeting"] == (
-        "Hi! To test hotword recognition, say a sentence containing "
+        "Hi! To test keyword recognition, say a sentence containing "
         "Agora, Conversational AI, RTC, then check the transcript."
     )
 

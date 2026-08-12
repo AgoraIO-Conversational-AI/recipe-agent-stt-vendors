@@ -27,7 +27,7 @@ The default `deepgram` vendor is Agora-managed (keyless), so the recipe is
 - `SPECS` maps each `STT_VENDOR` value to `VendorSpec(cls, creds, defaults, model_field)`.
 - `build_vendor(name, env)` builds the vendor, raising `ValueError` listing any
   missing credential env vars.
-- The UI can send optional Ares hotwords with `startAgent`; the backend sends
+- The UI can send optional Ares keywords with `startAgent`; the backend sends
   them as `params.keywords`.
 - `required_env(name)` / `available()` expose the registry.
 

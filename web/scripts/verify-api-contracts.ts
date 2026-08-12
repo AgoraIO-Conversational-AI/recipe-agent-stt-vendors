@@ -135,7 +135,7 @@ async function verifyApiClientRequests() {
       assert(body.vendor === 'ares', 'POST /api/startAgent should include the selected vendor')
       assert(
         JSON.stringify(body.keywords) === JSON.stringify(['Agora', 'RTC']),
-        'POST /api/startAgent should include the selected Ares hotwords',
+        'POST /api/startAgent should include the selected Ares keywords',
       )
 
       return Response.json({

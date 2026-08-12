@@ -32,7 +32,7 @@ def build_deepgram(env):
 
 
 def build_ares(env, keywords: Optional[List[str]] = None):
-    """Ares — Agora-managed, with optional request-level hotwords."""
+    """Ares — Agora-managed, with optional request-level keywords."""
     return AresSTT(keywords=keywords)
 
 

@@ -82,7 +82,7 @@ class StartAgentRequest(BaseModel):
     rtcUid: int
     userUid: int
     vendor: Optional[str] = None   # which STT vendor to use (defaults to STT_VENDOR / deepgram)
-    keywords: Optional[list[str]] = None  # optional Ares hotwords
+    keywords: Optional[list[str]] = None  # optional Ares keywords
     parameters: Optional[Dict[str, Any]] = None
 
 

@@ -13,11 +13,11 @@ type QuickstartPreCallCardProps = {
 	vendors?: VendorOption[];
 	selectedVendor?: string;
 	onVendorChange?: (vendor: string) => void;
-	supportsHotwords?: boolean;
-	hotwordsEnabled?: boolean;
-	onHotwordsEnabledChange?: (enabled: boolean) => void;
-	hotwords?: string;
-	onHotwordsChange?: (hotwords: string) => void;
+	supportsKeywords?: boolean;
+	keywordsEnabled?: boolean;
+	onKeywordsEnabledChange?: (enabled: boolean) => void;
+	keywords?: string;
+	onKeywordsChange?: (keywords: string) => void;
 };
 
 export function QuickstartPreCallCard({
@@ -27,11 +27,11 @@ export function QuickstartPreCallCard({
 	vendors,
 	selectedVendor,
 	onVendorChange,
-	supportsHotwords = false,
-	hotwordsEnabled = false,
-	onHotwordsEnabledChange,
-	hotwords = "",
-	onHotwordsChange,
+	supportsKeywords = false,
+	keywordsEnabled = false,
+	onKeywordsEnabledChange,
+	keywords = "",
+	onKeywordsChange,
 }: QuickstartPreCallCardProps) {
 	return (
 		<div
@@ -76,34 +76,34 @@ export function QuickstartPreCallCard({
 							Pick any vendor and start — “needs key” vendors require their env vars set
 							on the server, otherwise startup reports which are missing.
 						</p>
-						{supportsHotwords ? (
+						{supportsKeywords ? (
 							<div className="mt-4 border-t border-[#2b2b2b] pt-4">
 								<label
-									htmlFor="stt-hotwords-enabled"
+									htmlFor="stt-keywords-enabled"
 									className="flex items-center gap-2 text-sm text-white"
 								>
 									<input
-										id="stt-hotwords-enabled"
+										id="stt-keywords-enabled"
 										type="checkbox"
-										checked={hotwordsEnabled}
-										onChange={(e) => onHotwordsEnabledChange?.(e.target.checked)}
+										checked={keywordsEnabled}
+										onChange={(e) => onKeywordsEnabledChange?.(e.target.checked)}
 										disabled={isLoading}
 										className="h-4 w-4 accent-primary"
 									/>
-									Enable hotwords
+									Enable keywords
 								</label>
-								{hotwordsEnabled ? (
+								{keywordsEnabled ? (
 									<>
 										<label
-											htmlFor="stt-hotwords"
+											htmlFor="stt-keywords"
 											className="mt-3 block text-xs font-medium uppercase tracking-wide text-muted-foreground"
 										>
-											Hotwords
+											Keywords
 										</label>
 										<input
-											id="stt-hotwords"
-											value={hotwords}
-											onChange={(e) => onHotwordsChange?.(e.target.value)}
+											id="stt-keywords"
+											value={keywords}
+											onChange={(e) => onKeywordsChange?.(e.target.value)}
 											disabled={isLoading}
 											placeholder="Agora, Conversational AI, RTC"
 											className="mt-2 h-10 w-full rounded-lg border border-[#2b2b2b] bg-[#101010] px-3 text-sm text-white placeholder:text-muted-foreground"

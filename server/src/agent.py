@@ -95,7 +95,7 @@ class Agent:
         if keywords:
             sample = ", ".join(keywords[:3])
             greeting = (
-                "Hi! To test hotword recognition, say a sentence containing "
+                "Hi! To test keyword recognition, say a sentence containing "
                 f"{sample}, then check the transcript."
             )
 

@@ -99,9 +99,9 @@ export default function LandingPage() {
 	const [vendors, setVendors] = useState<VendorOption[]>([]);
 	const [selectedVendor, setSelectedVendor] = useState<string>("");
 	const [activeSttVendor, setActiveSttVendor] = useState<string>();
-	const [hotwordsEnabled, setHotwordsEnabled] = useState(false);
-	const [hotwords, setHotwords] = useState("");
-	const supportsHotwords = vendors.find((vendor) => vendor.name === selectedVendor)?.supports_keywords ?? false;
+	const [keywordsEnabled, setKeywordsEnabled] = useState(false);
+	const [keywords, setKeywords] = useState("");
+	const supportsKeywords = vendors.find((vendor) => vendor.name === selectedVendor)?.supports_keywords ?? false;
 
 	useEffect(() => {
 		import("agora-rtc-react").catch(() => {});
@@ -123,12 +123,12 @@ export default function LandingPage() {
 		setAgentJoinError(false);
 
 		try {
-			const parsedHotwords = hotwords
+			const parsedKeywords = keywords
 				.split(",")
 				.map((keyword) => keyword.trim())
 				.filter(Boolean);
-			if (supportsHotwords && hotwordsEnabled && parsedHotwords.length === 0) {
-				setError("Enter at least one hotword.");
+			if (supportsKeywords && keywordsEnabled && parsedKeywords.length === 0) {
+				setError("Enter at least one keyword.");
 				return;
 			}
 			const config = await getConfig();
@@ -140,7 +140,7 @@ export default function LandingPage() {
 					Number(config.agent_uid),
 					Number(config.uid),
 					selectedVendor || undefined,
-					hotwordsEnabled && supportsHotwords ? parsedHotwords : undefined,
+					keywordsEnabled && supportsKeywords ? parsedKeywords : undefined,
 				).catch((err) => {
 					console.error("Failed to start conversation with agent:", err);
 					setAgentJoinError(true);
@@ -244,11 +244,11 @@ export default function LandingPage() {
 							vendors={vendors}
 							selectedVendor={selectedVendor}
 							onVendorChange={setSelectedVendor}
-							supportsHotwords={supportsHotwords}
-							hotwordsEnabled={hotwordsEnabled}
-							onHotwordsEnabledChange={setHotwordsEnabled}
-							hotwords={hotwords}
-							onHotwordsChange={setHotwords}
+							supportsKeywords={supportsKeywords}
+							keywordsEnabled={keywordsEnabled}
+							onKeywordsEnabledChange={setKeywordsEnabled}
+							keywords={keywords}
+							onKeywordsChange={setKeywords}
 						/>
 					) : agoraData && rtmClient ? (
 						<>
