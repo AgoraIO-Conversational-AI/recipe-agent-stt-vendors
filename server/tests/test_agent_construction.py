@@ -124,3 +124,61 @@ def test_smallestai_session_enables_flexible_engine_path(fake_env, monkeypatch):
     assert captured["stt"]["vendor"] == "smallestai"
     assert captured["stt"]["params"]["language"] == "en-US"
     assert captured["parameters"]["enable_flexible"] is True
+
+
+def test_rtzr_session_enables_flexible_engine_path(fake_env, monkeypatch):
+    monkeypatch.setenv("RTZR_CLIENT_ID", "client-id")
+    monkeypatch.setenv("RTZR_CLIENT_SECRET", "client-secret")
+    monkeypatch.delenv("STT_MODEL", raising=False)
+    monkeypatch.delenv("STT_LANGUAGE", raising=False)
+    agent = _fresh_agent_module()
+    captured = {}
+
+    class FakeSession:
+        async def start(self):
+            return "test-rtzr-agent-id"
+
+    def fake_create_async_session(self, **kwargs):
+        captured["stt"] = self.stt
+        captured["parameters"] = self.parameters
+        return FakeSession()
+
+    from agora_agent.agentkit import Agent as AgoraAgent
+
+    monkeypatch.setattr(AgoraAgent, "create_async_session", fake_create_async_session)
+
+    asyncio.run(agent.Agent().start("ch", 111, 222, vendor="rtzr"))
+
+    assert captured["stt"]["vendor"] == "rtzr"
+    assert captured["stt"]["params"]["client_id"] == "client-id"
+    assert captured["parameters"]["enable_flexible"] is True
+
+
+def test_non_flexible_vendor_parameters_unchanged(fake_env, monkeypatch):
+    agent = _fresh_agent_module()
+    captured = {}
+
+    class FakeSession:
+        async def start(self):
+            return "test-deepgram-agent-id"
+
+    def fake_create_async_session(self, **kwargs):
+        captured["stt"] = self.stt
+        captured["parameters"] = self.parameters
+        return FakeSession()
+
+    from agora_agent.agentkit import Agent as AgoraAgent
+
+    monkeypatch.setattr(AgoraAgent, "create_async_session", fake_create_async_session)
+
+    asyncio.run(agent.Agent().start("ch", 111, 222, vendor="deepgram"))
+
+    assert captured["stt"]["vendor"] == "deepgram"
+    # enable_flexible is intentionally global; RTZR support must not add or strip params for other vendors.
+    assert captured["parameters"] == {
+        "audio_scenario": "chorus",
+        "enable_flexible": True,
+        "data_channel": "rtm",
+        "enable_error_message": True,
+        "enable_metrics": True,
+    }

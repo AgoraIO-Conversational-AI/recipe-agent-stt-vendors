@@ -14,6 +14,7 @@ from typing import Callable, Dict, List, Optional, Tuple
 from agora_agent.agentkit.vendors import (
     DeepgramSTT, AresSTT, AssemblyAISTT, SpeechmaticsSTT, OpenAISTT,
     MicrosoftSTT, GoogleSTT, GeminiSTT, AmazonSTT, SarvamSTT, SmallestAISTT,
+    RtzrSTT,
 )
 
 CATEGORY = "STT"
@@ -115,6 +116,19 @@ def build_smallestai(env):
     )
 
 
+def build_rtzr(env):
+    """RTZR — set RTZR_CLIENT_ID and RTZR_CLIENT_SECRET (global endpoint)."""
+    options = {
+        "client_id": env["RTZR_CLIENT_ID"],
+        "client_secret": env["RTZR_CLIENT_SECRET"],
+    }
+    if env.get("STT_MODEL"):
+        options["model_name"] = env["STT_MODEL"]
+    if env.get("STT_LANGUAGE"):
+        options["language"] = env["STT_LANGUAGE"]
+    return RtzrSTT(**options)
+
+
 # --- registry: name -> (builder, required env vars) -------------------------
 # An empty env list means the vendor is Agora-managed / key-less.
 REGISTRY: Dict[str, Tuple[Callable, List[str]]] = {
@@ -129,6 +143,7 @@ REGISTRY: Dict[str, Tuple[Callable, List[str]]] = {
     "amazon":       (build_amazon,       ["AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY", "AWS_REGION"]),
     "sarvam":       (build_sarvam,       ["SARVAM_API_KEY"]),
     "smallestai":   (build_smallestai,   ["SMALLEST_API_KEY"]),
+    "rtzr":         (build_rtzr,         ["RTZR_CLIENT_ID", "RTZR_CLIENT_SECRET"]),
 }
 
 

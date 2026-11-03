@@ -36,13 +36,15 @@ Two ways to pick a vendor:
 | Amazon Transcribe | `amazon` | `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION` | `en-US` |
 | Sarvam | `sarvam` | `SARVAM_API_KEY` | `en-IN` |
 | Smallest.ai | `smallestai` | `SMALLEST_API_KEY` | `en-US` |
+| RTZR | `rtzr` | `RTZR_CLIENT_ID`, `RTZR_CLIENT_SECRET` | optional `STT_MODEL` / `STT_LANGUAGE`; global US/EU/AP |
 
 🟢 = keyless default. The selected vendor's credentials are validated **when the
 agent starts** (not at construction), so `/get_config` always works key-less.
 
-The backend sets `parameters.enable_flexible=true` for Smallest AI STT
-compatibility. Keep this setting when reusing the agent setup; without it,
-the tested Engine deployment rejects `asr.vendor=smallestai`.
+The backend sets `parameters.enable_flexible=true` for Smallest AI and RTZR STT
+compatibility. Both vendors require a whitelisted (flexible) Engine to test.
+Keep this setting when reusing the agent setup; without it, the tested Engine
+deployment rejects `asr.vendor=smallestai` and `asr.vendor=rtzr`.
 
 ### Ares keywords
 
@@ -67,6 +69,7 @@ from agora_agent.agentkit.vendors import (
     AssemblyAISTT,
     DeepgramSTT,
     MicrosoftSTT,
+    RtzrSTT,
 )
 
 # Deepgram — Agora-managed, key-less:
@@ -86,6 +89,14 @@ MicrosoftSTT(
     key=env["AZURE_SPEECH_KEY"],
     region=env["AZURE_SPEECH_REGION"],
     language="en-US",
+)
+
+# RTZR — set RTZR_CLIENT_ID and RTZR_CLIENT_SECRET (global endpoint):
+RtzrSTT(
+    client_id=env["RTZR_CLIENT_ID"],
+    client_secret=env["RTZR_CLIENT_SECRET"],
+    model_name=env.get("STT_MODEL"),
+    language=env.get("STT_LANGUAGE"),
 )
 ```
 
@@ -204,7 +215,7 @@ name → builder + required env. See [ARCHITECTURE.md](./ARCHITECTURE.md).
 ## What You Get
 
 - A **vendor switchboard** for the STT leg: one `build_vendor()` over a registry
-  covering eleven STT vendors, selected via `STT_VENDOR`.
+  covering twelve STT vendors, selected via `STT_VENDOR`.
 - A **Next.js** web client (:3000) with a live **EventTimeline** (state, metric,
   error, turn events; reverse-chronological, capped at 50) and an **annotated
   transcript** that shows the current agent state in the header.

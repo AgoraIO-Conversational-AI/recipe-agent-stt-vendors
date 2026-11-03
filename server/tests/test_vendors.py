@@ -20,6 +20,7 @@ EXPECTED_VENDOR = {
     "amazon": "amazon",
     "sarvam": "sarvam",
     "smallestai": "smallestai",
+    "rtzr": "rtzr",
 }
 
 
@@ -120,4 +121,26 @@ def test_smallestai_defaults_to_en_us():
     assert config["params"] == {
         "api_key": "smallest-key",
         "language": "en-US",
+    }
+
+
+def test_rtzr_maps_credentials_and_common_overrides():
+    config = R.build_vendor(
+        "rtzr",
+        {
+            "RTZR_CLIENT_ID": "client-id",
+            "RTZR_CLIENT_SECRET": "client-secret",
+            "STT_MODEL": "general",
+            "STT_LANGUAGE": "ko-KR",
+        },
+    ).to_config()
+
+    assert config == {
+        "vendor": "rtzr",
+        "params": {
+            "client_id": "client-id",
+            "client_secret": "client-secret",
+            "model_name": "general",
+            "language": "ko-KR",
+        },
     }

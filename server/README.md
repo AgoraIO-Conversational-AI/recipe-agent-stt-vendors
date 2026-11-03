@@ -20,8 +20,9 @@ surface:
 The default `deepgram` vendor is Agora-managed (keyless), so the recipe is
 **zero-key** out of the box. There is **no separate `llm/` service**.
 
-The agent sets `parameters.enable_flexible=true` for Smallest AI STT
-compatibility with the Engine. The `smallestai` vendor requires
+The agent sets `parameters.enable_flexible=true` for Smallest AI and RTZR STT
+compatibility with the Engine (both require a whitelisted, flexible Engine to
+test). The `smallestai` vendor requires
 `SMALLEST_API_KEY` and defaults to `STT_LANGUAGE=en-US`.
 
 ## The vendor registry
@@ -35,6 +36,10 @@ compatibility with the Engine. The `smallestai` vendor requires
 - The UI can send optional Ares keywords with `startAgent`; the backend sends
   them as the top-level `keywords` field.
 - `required_env(name)` / `available()` expose the registry.
+- `rtzr` uses the global RTZR endpoint and requires `RTZR_CLIENT_ID` plus
+  `RTZR_CLIENT_SECRET`; `STT_MODEL` and `STT_LANGUAGE` map to its optional
+  `model_name` and `language` fields, and requires the flexible Engine path
+  (`enable_flexible=true`, set by `agent.py`).
 
 `agent.py` reads `STT_VENDOR` in `__init__` (no validation) and calls
 `build_vendor(self.vendor)` in `start()` — so BYO credentials are validated only
@@ -68,6 +73,8 @@ Optional:
 | `STT_MODEL` | per-vendor | Optional model override (vendors with a model field) |
 | `STT_LANGUAGE` | per-vendor | Optional language hint (documented per vendor) |
 | `AGENT_GREETING` | built-in | Optional opening line override |
+| `RTZR_CLIENT_ID` | — | Required when `STT_VENDOR=rtzr` |
+| `RTZR_CLIENT_SECRET` | — | Required when `STT_VENDOR=rtzr` |
 
 Selecting a BYO `STT_VENDOR` additionally requires that vendor's credential env
 vars (see `required_env` in `src/vendors.py` and the root README). These are

@@ -103,7 +103,7 @@ class Agent:
 
         parameters = {
             "audio_scenario": "chorus",  # web client — ultra-low-latency chorus profile
-            "enable_flexible": True,  # Required by the tested Engine path for Smallest AI STT.
+            "enable_flexible": True,  # Required by the tested (whitelisted) Engine path for Smallest AI and RTZR STT.
             "data_channel": "rtm",
             "enable_error_message": True,
             "enable_metrics": True,
