@@ -25,6 +25,13 @@ compatibility with the Engine (both require a whitelisted, flexible Engine to
 test). The `smallestai` vendor requires
 `SMALLEST_API_KEY` and defaults to `STT_LANGUAGE=en-US`.
 
+ElevenLabs and Fish Audio ASR require `agora-agents>=2.15.0` and an Engine
+v2.16-capable environment. They use global regions (this recipe uses US) and
+require their own STT API keys. Recognition language comes from the agent's
+`turn_detection.language` (SDK default `en-US`); this recipe does not map
+`STT_MODEL` or `STT_LANGUAGE` to these two providers. Qwen ASR is CN-only and
+is not included in this US pipeline.
+
 ## The vendor registry
 
 `src/vendors.py` is a data-driven switchboard:

@@ -11,6 +11,8 @@ import vendors as R  # noqa: E402
 # to_config() is a non-empty dict.
 EXPECTED_VENDOR = {
     "deepgram": "deepgram",
+    "elevenlabs": "elevenlabs",
+    "fishaudio": "fishaudio",
     "ares": "ares",
     "assemblyai": "assemblyai",
     "speechmatics": "speechmatics",
@@ -144,3 +146,37 @@ def test_rtzr_maps_credentials_and_common_overrides():
             "language": "ko-KR",
         },
     }
+
+
+@pytest.mark.parametrize("name,key", [
+    ("elevenlabs", "ELEVENLABS_STT_API_KEY"),
+    ("fishaudio", "FISHAUDIO_STT_API_KEY"),
+])
+def test_global_asr_credentials_and_config(name, key):
+    assert R.required_env(name) == [key]
+    for env in ({}, {key: ""}):
+        with pytest.raises(ValueError, match=key):
+            R.build_vendor(name, env)
+    assert R.build_vendor(name, {key: "stt-key"}).to_config() == {
+        "vendor": name, "params": {"api_key": "stt-key"},
+    }
+
+
+def test_vendor_list_exposes_global_asr_without_credentials(fake_env, monkeypatch):
+    from fastapi.testclient import TestClient
+    import server
+
+    for key in ("ELEVENLABS_STT_API_KEY", "FISHAUDIO_STT_API_KEY"):
+        monkeypatch.delenv(key, raising=False)
+    response = TestClient(server.app).get("/vendors")
+    assert response.status_code == 200
+    data = response.json()["data"]
+    assert data["default"] == "deepgram"
+    vendors = {item["name"]: item for item in data["vendors"]}
+    assert "qwen" not in vendors
+    for name, key in [("elevenlabs", "ELEVENLABS_STT_API_KEY"),
+                      ("fishaudio", "FISHAUDIO_STT_API_KEY")]:
+        assert vendors[name] == {
+            "name": name, "needs_key": True,
+            "required_env": [key], "supports_keywords": False,
+        }
