@@ -26,6 +26,8 @@ Two ways to pick a vendor:
 | Vendor | `STT_VENDOR` | Required env | Default model / language |
 | --- | --- | --- | --- |
 | Deepgram (managed) | `deepgram` 🟢 | _none_ | `nova-3`, `en` |
+| ElevenLabs ASR | `elevenlabs` | `ELEVENLABS_STT_API_KEY` | Engine default model; `en-US` |
+| Fish Audio ASR | `fishaudio` | `FISHAUDIO_STT_API_KEY` | Engine default model; `en-US` |
 | Ares (managed) | `ares` 🟢 | _none_ | SDK default |
 | AssemblyAI | `assemblyai` | `ASSEMBLYAI_API_KEY` | `en` |
 | Speechmatics | `speechmatics` | `SPEECHMATICS_API_KEY` | `en` |
@@ -45,6 +47,13 @@ The backend sets `parameters.enable_flexible=true` for Smallest AI and RTZR STT
 compatibility. Both vendors require a whitelisted (flexible) Engine to test.
 Keep this setting when reusing the agent setup; without it, the tested Engine
 deployment rejects `asr.vendor=smallestai` and `asr.vendor=rtzr`.
+
+ElevenLabs and Fish Audio ASR require `agora-agents>=2.15.0` and an Engine
+v2.16-capable environment. They use global regions (this recipe uses US) and
+require their own STT API keys. Recognition language comes from the agent's
+`turn_detection.language` (SDK default `en-US`); this recipe does not map
+`STT_MODEL` or `STT_LANGUAGE` to these two providers. Qwen ASR is CN-only and
+is not included in this US pipeline.
 
 ### Ares keywords
 
@@ -215,7 +224,7 @@ name → builder + required env. See [ARCHITECTURE.md](./ARCHITECTURE.md).
 ## What You Get
 
 - A **vendor switchboard** for the STT leg: one `build_vendor()` over a registry
-  covering twelve STT vendors, selected via `STT_VENDOR`.
+  covering fourteen STT vendors, selected via `STT_VENDOR`.
 - A **Next.js** web client (:3000) with a live **EventTimeline** (state, metric,
   error, turn events; reverse-chronological, capped at 50) and an **annotated
   transcript** that shows the current agent state in the header.

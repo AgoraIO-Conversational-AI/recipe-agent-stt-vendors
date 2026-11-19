@@ -6,6 +6,8 @@ exercises AgoraAgent construction — the exact path that agora-agents 2.3.x cha
 import asyncio
 import sys
 
+import pytest
+
 
 def _fresh_agent_module():
     sys.modules.pop("agent", None)
@@ -182,3 +184,55 @@ def test_non_flexible_vendor_parameters_unchanged(fake_env, monkeypatch):
         "enable_error_message": True,
         "enable_metrics": True,
     }
+
+
+@pytest.mark.parametrize("name,key", [
+    ("elevenlabs", "ELEVENLABS_STT_API_KEY"),
+    ("fishaudio", "FISHAUDIO_STT_API_KEY"),
+])
+def test_global_asr_join_request(fake_env, monkeypatch, name, key):
+    """Exercise the real SDK serialization with an in-memory HTTP transport."""
+    import json
+    import httpx
+
+    monkeypatch.setenv(key, "stt-key")
+    agent = _fresh_agent_module()
+    requests = []
+
+    def record(request):
+        requests.append(request)
+        return httpx.Response(200, json={"agent_id": "test-agent-id"})
+
+    async def run():
+        instance = agent.Agent()
+        async with httpx.AsyncClient(transport=httpx.MockTransport(record)) as http_client:
+            from agora_agent import Area, AsyncAgora
+            instance.client = AsyncAgora(
+                area=Area.US, app_id=fake_env["AGORA_APP_ID"],
+                app_certificate=fake_env["AGORA_APP_CERTIFICATE"],
+                httpx_client=http_client,
+            )
+            return await instance.start("ch", 111, 222, vendor=name)
+
+    result = asyncio.run(run())
+    assert result["vendor"] == name
+    assert len(requests) == 1
+    props = json.loads(requests[0].content)["properties"]
+    assert props["asr"] == {
+        "vendor": name, "language": "en-US", "params": {"api_key": "stt-key"},
+    }
+    assert props["llm"]["style"] == "openai"
+    assert props["tts"]["vendor"] == "minimax"
+
+
+@pytest.mark.parametrize("name,key", [
+    ("elevenlabs", "ELEVENLABS_STT_API_KEY"),
+    ("fishaudio", "FISHAUDIO_STT_API_KEY"),
+])
+def test_global_asr_missing_key_fails_at_start(fake_env, monkeypatch, name, key):
+    monkeypatch.delenv(key, raising=False)
+    monkeypatch.setenv("STT_VENDOR", name)
+    instance = _fresh_agent_module().Agent()
+    assert instance.vendor == name
+    with pytest.raises(ValueError, match=key):
+        asyncio.run(instance.start("ch", 111, 222))

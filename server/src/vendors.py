@@ -14,7 +14,7 @@ from typing import Callable, Dict, List, Optional, Tuple
 from agora_agent.agentkit.vendors import (
     DeepgramSTT, AresSTT, AssemblyAISTT, SpeechmaticsSTT, OpenAISTT,
     MicrosoftSTT, GoogleSTT, GeminiSTT, AmazonSTT, SarvamSTT, SmallestAISTT,
-    RtzrSTT,
+    RtzrSTT, ElevenLabsSTT, FishAudioSTT,
 )
 
 CATEGORY = "STT"
@@ -30,6 +30,16 @@ def _model(env, default: str) -> str:
 def build_deepgram(env):
     """Deepgram — Agora-managed, key-less by default."""
     return DeepgramSTT(model=_model(env, "nova-3"), language="en")
+
+
+def build_elevenlabs(env):
+    """ElevenLabs ASR (global) — set ELEVENLABS_STT_API_KEY."""
+    return ElevenLabsSTT(api_key=env["ELEVENLABS_STT_API_KEY"])
+
+
+def build_fishaudio(env):
+    """Fish Audio ASR (global) — set FISHAUDIO_STT_API_KEY."""
+    return FishAudioSTT(api_key=env["FISHAUDIO_STT_API_KEY"])
 
 
 def build_ares(env, keywords: Optional[List[str]] = None):
@@ -134,6 +144,8 @@ def build_rtzr(env):
 REGISTRY: Dict[str, Tuple[Callable, List[str]]] = {
     "deepgram":     (build_deepgram,     []),
     "ares":         (build_ares,         []),
+    "elevenlabs":   (build_elevenlabs,   ["ELEVENLABS_STT_API_KEY"]),
+    "fishaudio":    (build_fishaudio,    ["FISHAUDIO_STT_API_KEY"]),
     "assemblyai":   (build_assemblyai,   ["ASSEMBLYAI_API_KEY"]),
     "speechmatics": (build_speechmatics, ["SPEECHMATICS_API_KEY"]),
     "openai":       (build_openai,       ["OPENAI_STT_API_KEY"]),
